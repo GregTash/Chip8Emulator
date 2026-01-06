@@ -1,0 +1,70 @@
+#pragma once
+#include <iostream>
+#include <stdint.h>
+#include <vector>
+
+#include "SDL3/SDL.h"
+
+//Structs
+struct Vector2 {
+    float x;
+    float y;
+
+    Vector2(float _x, float _y) {
+        x = _x;
+        y = _y;
+    }
+};
+
+//Memory
+uint8_t memory[4096] = {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+    0x20, 0x60, 0x20, 0x20, 0x70, // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
+//Screen
+const Vector2 screenSize(64,32);
+uint8_t pixels[64*32];
+Vector2 screenScale(16,16);
+
+void RenderScreen(SDL_Renderer* renderer) {
+    float xPos = 0;
+    float yPos = 0;
+
+    for (long unsigned int i = 0; i < sizeof(pixels); i++) {
+        if (pixels[i] == 0) {
+            xPos++;
+            if (xPos >= 64) {
+                yPos++;
+                xPos = 0;
+            }
+            continue;
+        }
+
+        SDL_FRect rect = {
+            xPos*screenScale.x, yPos*screenScale.y,
+            screenScale.x, screenScale.y
+        };
+        SDL_RenderFillRect(renderer, &rect);
+
+        xPos++;
+        if (xPos >= 64) {
+            yPos++;
+            xPos = 0;
+        }
+    }
+}
