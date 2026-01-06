@@ -13,7 +13,7 @@ int main() {
         screenSize.x * screenScale.x,
         screenSize.y * screenScale.y,
         SDL_WINDOW_MOUSE_FOCUS);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
 
     SDL_Event event;
     bool active = true;
@@ -25,20 +25,32 @@ int main() {
                 case SDL_EVENT_QUIT:
                 active = false;
                 break;
+
+                case SDL_EVENT_KEY_DOWN:
+                Input();
+                break;
+
+                case SDL_EVENT_KEY_UP:
+                Input();
+                break;
             }
+        }
 
-            //Limit fps to 60 and run drawing functions 60 frames per second
-            if ((a - b) > 1000/60.0f) {
-                b = a;
+        //Limit fps to 60 and run functions at 60 frames per second
+        if ((a - b) > 1000/60.0f) {
+            b = a;
 
-                SDL_SetRenderDrawColor(renderer,0,0,0,255);
-                SDL_RenderClear(renderer);
-                SDL_SetRenderDrawColor(renderer,255,255,255,255);
+            //Other
+            UpdateTimers();
 
-                RenderScreen(renderer);
+            //Drawing
+            SDL_SetRenderDrawColor(renderer,0,0,0,255);
+            SDL_RenderClear(renderer);
+            SDL_SetRenderDrawColor(renderer,255,255,255,255);
 
-                SDL_RenderPresent(renderer);
-            }
+            RenderScreen(renderer);
+
+            SDL_RenderPresent(renderer);
         }
     }
 

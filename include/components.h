@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <vector>
+#include <map>
 
 #include "SDL3/SDL.h"
 
@@ -36,6 +37,18 @@ uint8_t memory[4096] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
+std::vector<uint16_t> stack;
+
+//Timers
+uint8_t delayTimer = 60, soundTimer = 60;
+void UpdateTimers() {
+    if (delayTimer <= 0) delayTimer = 60;
+    if (soundTimer <= 0) soundTimer = 60;
+
+    delayTimer -= 1;
+    soundTimer -= 1;
+}
+
 //Screen
 const Vector2 screenSize(64,32);
 uint8_t pixels[64*32];
@@ -67,4 +80,72 @@ void RenderScreen(SDL_Renderer* renderer) {
             xPos = 0;
         }
     }
+}
+
+//Input
+std::map<char, bool> keys = {
+    {'1', false}, {'2', false}, {'3', false}, {'C', false},
+    {'4', false}, {'5', false}, {'6', false}, {'D', false},
+    {'7', false}, {'8', false}, {'9', false}, {'E', false},
+    {'A', false}, {'0', false}, {'B', false}, {'F', false},
+};
+
+void Input() {
+    SDL_PumpEvents();
+
+    const bool *input = SDL_GetKeyboardState(nullptr);
+
+    if (input[SDL_SCANCODE_1]) keys['1'] = true;
+    else keys['1'] = false;
+
+    if (input[SDL_SCANCODE_2]) keys['2'] = true;
+    else keys['2'] = false;
+
+    if (input[SDL_SCANCODE_3]) keys['3'] = true;
+    else keys['3'] = false;
+
+    if (input[SDL_SCANCODE_4]) keys['C'] = true;
+    else keys['C'] = false;
+
+
+
+    if (input[SDL_SCANCODE_Q]) keys['4'] = true;
+    else keys['4'] = false;
+
+    if (input[SDL_SCANCODE_W]) keys['5'] = true;
+    else keys['5'] = false;
+
+    if (input[SDL_SCANCODE_E]) keys['6'] = true;
+    else keys['6'] = false;
+
+    if (input[SDL_SCANCODE_R]) keys['D'] = true;
+    else keys['D'] = false;
+    
+
+
+    if (input[SDL_SCANCODE_A]) keys['7'] = true;
+    else keys['7'] = false;
+
+    if (input[SDL_SCANCODE_S]) keys['8'] = true;
+    else keys['8'] = false;
+
+    if (input[SDL_SCANCODE_D]) keys['9'] = true;
+    else keys['9'] = false;
+
+    if (input[SDL_SCANCODE_F]) keys['E'] = true;
+    else keys['E'] = false;
+    
+
+
+    if (input[SDL_SCANCODE_Z]) keys['A'] = true;
+    else keys['A'] = false;
+
+    if (input[SDL_SCANCODE_X]) keys['0'] = true;
+    else keys['0'] = false;
+
+    if (input[SDL_SCANCODE_C]) keys['B'] = true;
+    else keys['B'] = false;
+
+    if (input[SDL_SCANCODE_V]) keys['F'] = true;
+    else keys['F'] = false;
 }
