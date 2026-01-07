@@ -15,4 +15,5 @@ add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 add_executable(chip8emu src/main.cpp)
 
 # Link to the actual SDL3 library.
-target_link_libraries(chip8emu PRIVATE SDL3::SDL3)
+target_link_libraries(chip8emu PRIVATE SDL3::SDL3 dl pthread m)
+target_link_libraries(chip8emu PRIVATE ${CMAKE_SOURCE_DIR}/lib/miniaudio.o)

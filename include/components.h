@@ -5,6 +5,7 @@
 #include <map>
 
 #include "SDL3/SDL.h"
+#include "miniaudio.h"
 
 //Structs
 struct Vector2 {
@@ -39,15 +40,40 @@ uint8_t memory[4096] = {
 
 std::vector<uint16_t> stack;
 
-//Timers
-uint8_t delayTimer = 60, soundTimer = 60;
-void UpdateTimers() {
-    if (delayTimer <= 0) delayTimer = 60;
-    if (soundTimer <= 0) soundTimer = 60;
+//Audio
+ma_result audio_result;
+ma_engine engine;
+ma_sound sound;
 
-    delayTimer -= 1;
-    soundTimer -= 1;
+ma_result InitAudio() {
+    audio_result = ma_engine_init(NULL, &engine);
+    if (audio_result != MA_SUCCESS) {
+        return audio_result;
+    }
+
+    audio_result = ma_sound_init_from_file(&engine, "tone.wav", 0, NULL, NULL, &sound);
+    if (audio_result != MA_SUCCESS) {
+        return audio_result;
+    }
+
+    return MA_SUCCESS;
 }
+
+//Timers
+uint8_t delayTimer = 0, soundTimer = 0;
+void UpdateTimers() {
+    if (delayTimer > 0) delayTimer -= 1;
+    if (soundTimer > 0) {
+        if(!ma_sound_is_playing(&sound)) ma_sound_start(&sound);
+
+        soundTimer -= 1;
+    }
+    else {
+        ma_sound_stop(&sound);
+    }
+}
+void startDelayTimer() { delayTimer = 60; }
+void startSoundTimer() { soundTimer = 60; }
 
 //Screen
 const Vector2 screenSize(64,32);

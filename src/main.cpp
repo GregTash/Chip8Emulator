@@ -3,7 +3,15 @@
 
 #include "../include/components.h"
 
+#include "../include/miniaudio.h"
+
+void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
+
+}
+
 int main() {
+    if (InitAudio() != MA_SUCCESS) return audio_result;
+
     //Used to calculate delta time
     long a = 0.0f, b = 0.0f;
 
@@ -54,6 +62,7 @@ int main() {
         }
     }
 
+    ma_engine_uninit(&engine);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     return 0;
