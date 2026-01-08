@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <vector>
 #include <map>
+#include <fstream>
 
 #include "SDL3/SDL.h"
 #include "miniaudio.h"
@@ -17,6 +18,24 @@ struct Vector2 {
         y = _y;
     }
 };
+
+//Registers
+uint8_t V0 = 0;
+uint8_t V1 = 0;
+uint8_t V2 = 0;
+uint8_t V3 = 0;
+uint8_t V4 = 0;
+uint8_t V5 = 0;
+uint8_t V6 = 0;
+uint8_t V7 = 0;
+uint8_t V8 = 0;
+uint8_t V9 = 0;
+uint8_t VA = 0;
+uint8_t VB = 0;
+uint8_t VC = 0;
+uint8_t VD = 0;
+uint8_t VE = 0;
+uint8_t VF = 0;
 
 //Memory
 uint8_t memory[4096] = {
@@ -37,6 +56,30 @@ uint8_t memory[4096] = {
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
+uint16_t PC = 80;
+uint16_t I = 0;
+
+#define APP_ADDRESS 80
+int LoadApplication(const char* fileName, uint8_t* memory) {
+    std::ifstream appFile(fileName);
+    if (!appFile) {
+        std::cout << "Could not load file: " << fileName << '\n';
+        return -1;
+    }
+
+    char c;
+
+    while (appFile.good()) {
+        appFile.get(c);
+        memory[PC] = c;
+        PC++;
+    }
+
+    PC = APP_ADDRESS;
+    appFile.close();
+    
+    return 0;
+}
 
 std::vector<uint16_t> stack;
 
@@ -174,4 +217,11 @@ void Input() {
 
     if (input[SDL_SCANCODE_V]) keys['F'] = true;
     else keys['F'] = false;
+}
+
+namespace instructions {
+    void ClearScreen(SDL_Renderer* renderer) {
+        SDL_SetRenderDrawColor(renderer,0,0,0,255);
+        SDL_RenderClear(renderer);
+    }
 }
